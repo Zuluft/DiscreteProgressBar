@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DiscreteProgressBar">
+        <attr name="inactiveProgressIndicator" format="integer" />
+        <attr name="activeProgressIndicator" format="integer" />
+        <attr name="separator" format="integer" />
+        <attr name="indicatorSize" format="dimension" />
+        <attr name="separatorHeight" format="dimension" />
+        <attr name="separatorWidth" format="dimension" />
+        <attr name="separatorPadding" format="dimension" />
+        <attr name="animationDuration" format="integer" />
+    </declare-styleable>
+</resources>

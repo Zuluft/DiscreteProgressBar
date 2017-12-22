@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="progress_indicator_default_size">22dp</dimen>
+    <dimen name="progress_separator_default_width">32dp</dimen>
+    <dimen name="progress_separator_default_height">5dp</dimen>
+    <dimen name="progress_separator_default_padding">10dp</dimen>
+</resources>
