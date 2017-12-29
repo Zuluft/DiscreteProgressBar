@@ -9,5 +9,6 @@
         <attr name="separatorWidth" format="dimension" />
         <attr name="separatorPadding" format="dimension" />
         <attr name="animationDuration" format="integer" />
+        <attr name="activeIndicatorColor" format="string" />
     </declare-styleable>
 </resources>

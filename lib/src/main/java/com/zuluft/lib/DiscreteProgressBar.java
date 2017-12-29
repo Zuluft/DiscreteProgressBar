@@ -5,12 +5,17 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DiscreteProgressBar
         extends
@@ -30,6 +35,11 @@ public class DiscreteProgressBar
     private int mMaxProgress;
     private int mCurrentProgress;
 
+    private int mActiveIndicatorColor;
+    final int DEFAULT_ACTIVE_INDICATOR_COLOR = Color.GREEN;
+
+
+
     public DiscreteProgressBar(Context context) {
         super(context);
         init(null);
@@ -43,6 +53,13 @@ public class DiscreteProgressBar
     public DiscreteProgressBar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(attrs);
+    }
+
+
+    public void setActiveIndicatorColor(int color){
+         this.mActiveIndicatorColor = color;
+         mActiveProgressIndicator.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+         invalidate();
     }
 
     public final void setMaxProgress(final int maxProgress) {
@@ -103,7 +120,13 @@ public class DiscreteProgressBar
                 .getDrawable(R.styleable.DiscreteProgressBar_activeProgressIndicator);
         if (mActiveProgressIndicator == null) {
             mActiveProgressIndicator =
-                    getDrawableByResId(R.drawable.ic_active_progress_indicator);
+                    getDrawableByResId(R.drawable.ic_active_vector);
+
+
+            String attrColor = typedArray.getString(R.styleable.DiscreteProgressBar_activeIndicatorColor);
+
+            mActiveIndicatorColor = validateColor(attrColor);
+            mActiveProgressIndicator.setColorFilter(mActiveIndicatorColor, PorterDuff.Mode.SRC_ATOP);
         }
         mSeparator = typedArray
                 .getDrawable(R.styleable.DiscreteProgressBar_separator);
@@ -162,6 +185,19 @@ public class DiscreteProgressBar
                 indicatorStartX += mSeparatorPadding;
             }
         }
+    }
+
+    private int validateColor(String color){
+
+        if(color == null)
+            return DEFAULT_ACTIVE_INDICATOR_COLOR;
+
+
+        String pattern =  "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}|[A-Fa-f0-9]{8})$";
+        Pattern colorPattern = Pattern.compile(pattern);
+        Matcher m = colorPattern.matcher(color);
+
+        return m.matches() ? Color.parseColor(color) : DEFAULT_ACTIVE_INDICATOR_COLOR;
     }
 
     private int calculateProgressBarWidth() {
