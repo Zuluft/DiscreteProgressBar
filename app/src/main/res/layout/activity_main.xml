@@ -12,7 +12,7 @@
         app:activeIndicatorColor="#ffff00"
         android:id="@+id/discreteProgressBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="50dp" />
 
 
     <android.support.v4.view.ViewPager
