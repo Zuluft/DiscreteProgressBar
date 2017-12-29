@@ -19,13 +19,16 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mDiscreteProgressBar = findViewById(R.id.discreteProgressBar);
-        mDiscreteProgressBar.setActiveIndicatorColor(Color.parseColor("#c9a485"));
+
         mViewPager = findViewById(R.id.viewPager);
         PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(pagerAdapter);
         mDiscreteProgressBar.setMaxProgress(pagerAdapter.getCount());
         mDiscreteProgressBar.setCurrentProgress(mViewPager.getCurrentItem());
         mViewPager.addOnPageChangeListener(this);
+
+
+        mDiscreteProgressBar.setActiveIndicatorColor(Color.BLUE);
     }
 
     @Override

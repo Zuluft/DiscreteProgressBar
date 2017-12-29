@@ -8,20 +8,21 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class DiscreteProgressBar
         extends
         View {
 
     public static final int DEFAULT_ANIMATION_DURATION = 300;
+    public static final int DEFAULT_ACTIVE_INDICATOR_COLOR = Color.GREEN;
+
 
     private Drawable mInactiveProgressIndicator;
     private Drawable mActiveProgressIndicator;
@@ -34,9 +35,8 @@ public class DiscreteProgressBar
 
     private int mMaxProgress;
     private int mCurrentProgress;
-
     private int mActiveIndicatorColor;
-    final int DEFAULT_ACTIVE_INDICATOR_COLOR = Color.GREEN;
+
 
 
 
@@ -123,9 +123,11 @@ public class DiscreteProgressBar
                     getDrawableByResId(R.drawable.ic_active_vector);
 
 
-            String attrColor = typedArray.getString(R.styleable.DiscreteProgressBar_activeIndicatorColor);
+            mActiveIndicatorColor = typedArray.getColor(
+                    R.styleable.DiscreteProgressBar_activeIndicatorColor,
+                    DEFAULT_ACTIVE_INDICATOR_COLOR
+            );
 
-            mActiveIndicatorColor = validateColor(attrColor);
             mActiveProgressIndicator.setColorFilter(mActiveIndicatorColor, PorterDuff.Mode.SRC_ATOP);
         }
         mSeparator = typedArray
@@ -187,17 +189,23 @@ public class DiscreteProgressBar
         }
     }
 
-    private int validateColor(String color){
-
-        if(color == null)
-            return DEFAULT_ACTIVE_INDICATOR_COLOR;
 
 
-        String pattern =  "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}|[A-Fa-f0-9]{8})$";
-        Pattern colorPattern = Pattern.compile(pattern);
-        Matcher m = colorPattern.matcher(color);
 
-        return m.matches() ? Color.parseColor(color) : DEFAULT_ACTIVE_INDICATOR_COLOR;
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        SavedState ss = (SavedState) state;
+        super.onRestoreInstanceState(ss.getSuperState());
+        mActiveIndicatorColor = ss.value;
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+
+        Parcelable superState = super.onSaveInstanceState();
+        SavedState ss = new SavedState(superState);
+        ss.value = mActiveIndicatorColor;
+        return ss;
     }
 
     private int calculateProgressBarWidth() {
@@ -211,4 +219,40 @@ public class DiscreteProgressBar
         int result = (width - progressBarWidth) / 2;
         return result < 0 ? 0 : result;
     }
+
+
+
+
+
+    private static class SavedState extends BaseSavedState {
+
+        int value; //this will store the current value from ValueBar
+
+        SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        private SavedState(Parcel in) {
+            super(in);
+            value = in.readInt();
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeInt(value);
+        }
+
+        public static final Parcelable.Creator<SavedState> CREATOR
+                = new Parcelable.Creator<SavedState>() {
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
+    }
+
 }

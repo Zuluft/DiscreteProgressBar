@@ -9,7 +9,7 @@
     tools:context="com.zuluft.discreteprogressbar.MainActivity">
 
     <com.zuluft.lib.DiscreteProgressBar
-        app:activeIndicatorColor="#ffff00"
+        app:activeIndicatorColor="#c9a485"
         android:id="@+id/discreteProgressBar"
         android:layout_width="match_parent"
         android:layout_height="50dp" />
