@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
@@ -21,7 +20,6 @@ public class DiscreteProgressBar
         View {
 
     public static final int DEFAULT_ANIMATION_DURATION = 300;
-    public static final int DEFAULT_ACTIVE_INDICATOR_COLOR = Color.GREEN;
 
 
     private Drawable mInactiveProgressIndicator;
@@ -118,18 +116,25 @@ public class DiscreteProgressBar
         }
         mActiveProgressIndicator = typedArray
                 .getDrawable(R.styleable.DiscreteProgressBar_activeProgressIndicator);
+
+
+        mActiveIndicatorColor = typedArray.getColor(
+                R.styleable.DiscreteProgressBar_activeIndicatorColor,
+                -1
+        );
+
+
         if (mActiveProgressIndicator == null) {
             mActiveProgressIndicator =
                     getDrawableByResId(R.drawable.ic_active_vector);
-
-
-            mActiveIndicatorColor = typedArray.getColor(
-                    R.styleable.DiscreteProgressBar_activeIndicatorColor,
-                    DEFAULT_ACTIVE_INDICATOR_COLOR
-            );
-
-            mActiveProgressIndicator.setColorFilter(mActiveIndicatorColor, PorterDuff.Mode.SRC_ATOP);
         }
+
+
+        if(mActiveIndicatorColor != -1){
+            mActiveProgressIndicator.setColorFilter(mActiveIndicatorColor, PorterDuff.Mode.SRC_IN);
+        }
+
+
         mSeparator = typedArray
                 .getDrawable(R.styleable.DiscreteProgressBar_separator);
         if (mSeparator == null) {
