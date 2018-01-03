@@ -3,11 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:clipChildren="false"
     android:orientation="vertical"
     tools:context="com.zuluft.discreteprogressbar.MainActivity">
 
     <com.zuluft.lib.DiscreteProgressBar
+        app:activeIndicatorColor="#c9a485"
         android:id="@+id/discreteProgressBar"
         android:layout_width="match_parent"
         android:layout_height="50dp" />
@@ -17,6 +19,6 @@
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorAccent" />
+        />
 
 </LinearLayout>

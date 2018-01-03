@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -18,6 +21,7 @@ public class DiscreteProgressBar
 
     public static final int DEFAULT_ANIMATION_DURATION = 300;
 
+
     private Drawable mInactiveProgressIndicator;
     private Drawable mActiveProgressIndicator;
     private Drawable mSeparator;
@@ -29,6 +33,10 @@ public class DiscreteProgressBar
 
     private int mMaxProgress;
     private int mCurrentProgress;
+    private int mActiveIndicatorColor;
+
+
+
 
     public DiscreteProgressBar(Context context) {
         super(context);
@@ -43,6 +51,13 @@ public class DiscreteProgressBar
     public DiscreteProgressBar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(attrs);
+    }
+
+
+    public void setActiveIndicatorColor(int color){
+         this.mActiveIndicatorColor = color;
+         mActiveProgressIndicator.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+         invalidate();
     }
 
     public final void setMaxProgress(final int maxProgress) {
@@ -101,10 +116,25 @@ public class DiscreteProgressBar
         }
         mActiveProgressIndicator = typedArray
                 .getDrawable(R.styleable.DiscreteProgressBar_activeProgressIndicator);
+
+
+        mActiveIndicatorColor = typedArray.getColor(
+                R.styleable.DiscreteProgressBar_activeIndicatorColor,
+                -1
+        );
+
+
         if (mActiveProgressIndicator == null) {
             mActiveProgressIndicator =
-                    getDrawableByResId(R.drawable.ic_active_progress_indicator);
+                    getDrawableByResId(R.drawable.ic_active_vector);
         }
+
+
+        if(mActiveIndicatorColor != -1){
+            mActiveProgressIndicator.setColorFilter(mActiveIndicatorColor, PorterDuff.Mode.SRC_IN);
+        }
+
+
         mSeparator = typedArray
                 .getDrawable(R.styleable.DiscreteProgressBar_separator);
         if (mSeparator == null) {
@@ -164,6 +194,25 @@ public class DiscreteProgressBar
         }
     }
 
+
+
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        SavedState ss = (SavedState) state;
+        super.onRestoreInstanceState(ss.getSuperState());
+        mActiveIndicatorColor = ss.value;
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+
+        Parcelable superState = super.onSaveInstanceState();
+        SavedState ss = new SavedState(superState);
+        ss.value = mActiveIndicatorColor;
+        return ss;
+    }
+
     private int calculateProgressBarWidth() {
         final int paddingForOneSeparator = 2 * mSeparatorPadding;
         final int separatorWidthWithPadding = mSeparatorWidth + paddingForOneSeparator;
@@ -175,4 +224,40 @@ public class DiscreteProgressBar
         int result = (width - progressBarWidth) / 2;
         return result < 0 ? 0 : result;
     }
+
+
+
+
+
+    private static class SavedState extends BaseSavedState {
+
+        int value; //this will store the current value from ValueBar
+
+        SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        private SavedState(Parcel in) {
+            super(in);
+            value = in.readInt();
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeInt(value);
+        }
+
+        public static final Parcelable.Creator<SavedState> CREATOR
+                = new Parcelable.Creator<SavedState>() {
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.zuluft.discreteprogressbar;
 
+import android.graphics.Color;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,12 +19,16 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mDiscreteProgressBar = findViewById(R.id.discreteProgressBar);
+
         mViewPager = findViewById(R.id.viewPager);
         PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(pagerAdapter);
         mDiscreteProgressBar.setMaxProgress(pagerAdapter.getCount());
         mDiscreteProgressBar.setCurrentProgress(mViewPager.getCurrentItem());
         mViewPager.addOnPageChangeListener(this);
+
+
+        mDiscreteProgressBar.setActiveIndicatorColor(Color.BLUE);
     }
 
     @Override
