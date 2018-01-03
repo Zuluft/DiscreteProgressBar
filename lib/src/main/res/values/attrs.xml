@@ -9,6 +9,26 @@
         <attr name="separatorWidth" format="dimension" />
         <attr name="separatorPadding" format="dimension" />
         <attr name="animationDuration" format="integer" />
-        <attr name="activeIndicatorColor" format="color" />
+        <attr name="activeProgressIndicatorColor" format="color" />
+        <attr name="activeProgressIndicatorColorMode" format="enum">
+            <enum name="CLEAR" value="0" />
+            <enum name="SRC" value="1" />
+            <enum name="DST" value="2" />
+            <enum name="SRC_OVER" value="3" />
+            <enum name="DST_OVER" value="4" />
+            <enum name="SRC_IN" value="5" />
+            <enum name="DST_IN" value="6" />
+            <enum name="SRC_OUT" value="7" />
+            <enum name="DST_OUT" value="8" />
+            <enum name="SRC_ATOP" value="9" />
+            <enum name="DST_ATOP" value="10" />
+            <enum name="XOR" value="11" />
+            <enum name="DARKEN" value="12" />
+            <enum name="LIGHTEN" value="13" />
+            <enum name="MULTIPLY" value="14" />
+            <enum name="SCREEN" value="15" />
+            <enum name="ADD" value="16" />
+            <enum name="OVERLAY" value="17" />
+        </attr>
     </declare-styleable>
 </resources>

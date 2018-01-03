@@ -9,7 +9,9 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
@@ -19,7 +21,11 @@ public class DiscreteProgressBar
         extends
         View {
 
-    public static final int DEFAULT_ANIMATION_DURATION = 300;
+    private static final int DEFAULT_ANIMATION_DURATION = 300;
+
+    private static final int DEFAULT_COLOR_MODE = PorterDuff.Mode.SRC_IN.ordinal();
+
+    private static final int EMPTY_PROGRESS_INDICATOR_COLOR = -1;
 
 
     private Drawable mInactiveProgressIndicator;
@@ -33,9 +39,8 @@ public class DiscreteProgressBar
 
     private int mMaxProgress;
     private int mCurrentProgress;
-    private int mActiveIndicatorColor;
-
-
+    private int mActiveProgressIndicatorColor;
+    private int mActiveProgressIndicatorColorMode;
 
 
     public DiscreteProgressBar(Context context) {
@@ -54,10 +59,12 @@ public class DiscreteProgressBar
     }
 
 
-    public void setActiveIndicatorColor(int color){
-         this.mActiveIndicatorColor = color;
-         mActiveProgressIndicator.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
-         invalidate();
+    public void setActiveIndicatorColor(@ColorInt final int color,
+                                        @NonNull final PorterDuff.Mode mode) {
+        mActiveProgressIndicatorColorMode = mode.ordinal();
+        mActiveProgressIndicatorColor = color;
+        mActiveProgressIndicator.setColorFilter(color, mode);
+        invalidate();
     }
 
     public final void setMaxProgress(final int maxProgress) {
@@ -117,23 +124,10 @@ public class DiscreteProgressBar
         mActiveProgressIndicator = typedArray
                 .getDrawable(R.styleable.DiscreteProgressBar_activeProgressIndicator);
 
-
-        mActiveIndicatorColor = typedArray.getColor(
-                R.styleable.DiscreteProgressBar_activeIndicatorColor,
-                -1
-        );
-
-
         if (mActiveProgressIndicator == null) {
             mActiveProgressIndicator =
-                    getDrawableByResId(R.drawable.ic_active_vector);
+                    getDrawableByResId(R.drawable.ic_active_progress_indicator);
         }
-
-
-        if(mActiveIndicatorColor != -1){
-            mActiveProgressIndicator.setColorFilter(mActiveIndicatorColor, PorterDuff.Mode.SRC_IN);
-        }
-
 
         mSeparator = typedArray
                 .getDrawable(R.styleable.DiscreteProgressBar_separator);
@@ -160,6 +154,19 @@ public class DiscreteProgressBar
         mAnimationDuration = typedArray
                 .getInteger(R.styleable.DiscreteProgressBar_animationDuration,
                         DEFAULT_ANIMATION_DURATION);
+
+        mActiveProgressIndicatorColor = typedArray.getColor(
+                R.styleable.DiscreteProgressBar_activeProgressIndicatorColor,
+                EMPTY_PROGRESS_INDICATOR_COLOR
+        );
+
+        if (mActiveProgressIndicatorColor != EMPTY_PROGRESS_INDICATOR_COLOR) {
+            mActiveProgressIndicatorColorMode = typedArray.getInt(R.styleable
+                            .DiscreteProgressBar_activeProgressIndicatorColorMode,
+                    DEFAULT_COLOR_MODE);
+            mActiveProgressIndicator.setColorFilter(mActiveProgressIndicatorColor,
+                    PorterDuff.Mode.values()[mActiveProgressIndicatorColorMode]);
+        }
         typedArray.recycle();
     }
 
@@ -195,13 +202,15 @@ public class DiscreteProgressBar
     }
 
 
-
-
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
         SavedState ss = (SavedState) state;
         super.onRestoreInstanceState(ss.getSuperState());
-        mActiveIndicatorColor = ss.value;
+        mActiveProgressIndicatorColor = ss.mActiveIndicatorColor;
+        if (mActiveProgressIndicatorColor != EMPTY_PROGRESS_INDICATOR_COLOR) {
+            setActiveIndicatorColor(mActiveProgressIndicatorColor,
+                    PorterDuff.Mode.values()[ss.mActiveProgressIndicatorColorMode]);
+        }
     }
 
     @Override
@@ -209,7 +218,8 @@ public class DiscreteProgressBar
 
         Parcelable superState = super.onSaveInstanceState();
         SavedState ss = new SavedState(superState);
-        ss.value = mActiveIndicatorColor;
+        ss.mActiveIndicatorColor = mActiveProgressIndicatorColor;
+        ss.mActiveProgressIndicatorColorMode = mActiveProgressIndicatorColorMode;
         return ss;
     }
 
@@ -226,12 +236,10 @@ public class DiscreteProgressBar
     }
 
 
-
-
-
     private static class SavedState extends BaseSavedState {
 
-        int value; //this will store the current value from ValueBar
+        private int mActiveIndicatorColor;
+        private int mActiveProgressIndicatorColorMode;
 
         SavedState(Parcelable superState) {
             super(superState);
@@ -239,13 +247,15 @@ public class DiscreteProgressBar
 
         private SavedState(Parcel in) {
             super(in);
-            value = in.readInt();
+            mActiveIndicatorColor = in.readInt();
+            mActiveProgressIndicatorColorMode = in.readInt();
         }
 
         @Override
         public void writeToParcel(Parcel out, int flags) {
             super.writeToParcel(out, flags);
-            out.writeInt(value);
+            out.writeInt(mActiveIndicatorColor);
+            out.writeInt(mActiveProgressIndicatorColorMode);
         }
 
         public static final Parcelable.Creator<SavedState> CREATOR

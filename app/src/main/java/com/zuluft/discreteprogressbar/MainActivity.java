@@ -1,18 +1,18 @@
 package com.zuluft.discreteprogressbar;
 
-import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.zuluft.lib.DiscreteProgressBar;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
 
     private DiscreteProgressBar mDiscreteProgressBar;
     private ViewPager mViewPager;
-
-    public static final String KEY_CURRENT_PROGRESS = "KEY_CURRENT_PROGRESS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,10 +25,12 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         mViewPager.setAdapter(pagerAdapter);
         mDiscreteProgressBar.setMaxProgress(pagerAdapter.getCount());
         mDiscreteProgressBar.setCurrentProgress(mViewPager.getCurrentItem());
+        if (savedInstanceState == null) {
+            mDiscreteProgressBar
+                    .setActiveIndicatorColor(ContextCompat.getColor(this, R.color.colorPrimaryDark),
+                            PorterDuff.Mode.SRC_IN);
+        }
         mViewPager.addOnPageChangeListener(this);
-
-
-        mDiscreteProgressBar.setActiveIndicatorColor(Color.BLUE);
     }
 
     @Override
